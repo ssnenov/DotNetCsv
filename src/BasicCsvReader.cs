@@ -24,7 +24,9 @@ namespace DotNetCsv
         private char* cellValueBufferStartPtr;
         private int currentCharIndex = 0;
         private GCHandle gcHandle;
-        private bool immutableRows = false;
+        private bool immutableRows = false; // TODO: add it as configuration. The default value should be true in order to prevent enumeration isues. However, the CsvReader should set it as false by default.
+
+        // TODO: add quote character as configuration - '"' or '\''
 
         public BasicCsvReader()
         {
@@ -57,7 +59,7 @@ namespace DotNetCsv
                     }
                     else if (!isEnclosedQuotesValue && currentChar == '\r' && readerBuffer[i + 1] == '\n') // Reading new line. TODO: Add line ending as an option (\r\n or\n)
                     {
-                        i++; // Skipping \n character
+                        i++; // Skipping the '\n' character
 
                         if (currentCharIndex != 0)
                         {
