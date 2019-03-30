@@ -6,9 +6,10 @@ using System.Runtime.InteropServices;
 
 namespace DotNetCsv
 {
-    public unsafe class BasicCsvReader : ICsvReader<IList<string>>
+    public unsafe class BasicCsvReader : ICsvReader<IList<string>>, IDisposable
     {
         private const int ReaderBlockBufferSize = 128;
+        private bool disposedValue = false;
         private bool isEnclosedQuotesValue;
 
         // used for flag indicating is it a first or second quoted from escaping quote - "". It's false when odd number of quotes are found within a value and true when even number.
@@ -165,6 +166,37 @@ namespace DotNetCsv
 
             this.cellValueBufferPtr = this.cellValueBufferStartPtr;
             currentCharIndex = 0;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                // if (disposing)
+                // { No manged disposable objects at this moment }
+
+                this.gcHandle.Free();
+
+                // Disposing an object doesn't mean that the object is collected by the GC and it will be collected later.
+                // This is why we are setting the fields to null => the arrays might be collected earlier than the BasicCsvReader
+                // because it could be hold by a reference from other objects.
+                this.cellValueBuffer = null;
+                this.readerBuffer = null;
+                this.rowCells = null;
+
+                disposedValue = true;
+            }
+        }
+
+        ~BasicCsvReader()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
