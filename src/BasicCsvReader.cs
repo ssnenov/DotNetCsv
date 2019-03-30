@@ -64,13 +64,8 @@ namespace DotNetCsv
                             ReadCellValue();
                         }
 
-                        if(this.immutableRows) {
-                            yield return this.rowCells;
-                            this.rowCells = new List<string>(this.rowCells.Count); // creating new object, since the lastly used is returned and could be changed/enumerated by the user later
-                        } else {
-                            yield return this.rowCells;
-                            this.rowCells.Clear();
-                        }
+                        yield return this.rowCells;
+                        this.ReadEndOfRow();
                     }
                     else
                     {
@@ -94,9 +89,8 @@ namespace DotNetCsv
 
             if (rowCells.Count != 0)
             {
-                // TODO: this is a bug. It should use immutableRows to determine the correct behavior
                 yield return rowCells;
-                rowCells = new List<string>(rowCells.Count);
+                this.ReadEndOfRow();
             }
 
             // TODO: free it on Dispose
@@ -148,6 +142,18 @@ namespace DotNetCsv
             else
             {
                 this.isEnclosedQuotesValue = true;
+            }
+        }
+
+        private void ReadEndOfRow()
+        {
+            if (this.immutableRows)
+            {
+                this.rowCells = new List<string>(this.rowCells.Count); // creating new object, since the lastly used is returned and could be changed/enumerated by the user later
+            }
+            else
+            {
+                this.rowCells.Clear();
             }
         }
 
