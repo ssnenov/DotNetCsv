@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 
 namespace DotNetCsv
 {
-    public class CsvReader<T> : ICsvReader<T> where T : new()
+    public class CsvReader<T> : ICsvReader<T>, IDisposable where T : new()
     {
         private static PropertyInfo iListIndexerCache = typeof(IList<object>).GetProperties().First(x => x.GetIndexParameters().Length > 0);
 
@@ -139,5 +139,7 @@ namespace DotNetCsv
 
             return (Func<IList<object>, T>)Expression.Lambda(memberInit, propertyValues).Compile();
         }
+
+        public virtual void Dispose() => this.csvReader?.Dispose();
     }
 }
