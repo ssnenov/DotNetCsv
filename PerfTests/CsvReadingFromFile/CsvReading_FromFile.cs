@@ -49,5 +49,13 @@ namespace PerfTests
         {
             new CsvReader(new StreamReader(csvFilePath)).ToArray();
         }
+
+        [Benchmark]
+        public void CsvHelper()
+        {
+            var reader = new CsvHelper.CsvReader(new StreamReader(csvFilePath));
+            reader.Configuration.RegisterClassMap<CsvHelperPrecipMapper>();
+            reader.GetRecords<Precip>().ToArray();
+        }
     }
 }
