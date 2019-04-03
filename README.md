@@ -10,11 +10,13 @@ Intel Core i5 CPU M 480 2.67GHz, 1 CPU, 4 logical and 2 physical cores
   [Host]     : .NET Core 2.2.3 (CoreCLR 4.6.27414.05, CoreFX 4.6.27414.05), 64bit RyuJIT
   DefaultJob : .NET Core 2.2.3 (CoreCLR 4.6.27414.05, CoreFX 4.6.27414.05), 64bit RyuJIT
 
-|                                 Method |      Mean |     Error |    StdDev | Gen 0/1k Op | Gen 1/1k Op | Gen 2/1k Op | Allocated Memory/Op |
-|--------------------------------------- |----------:|----------:|----------:|------------:|------------:|------------:|--------------------:|
-| DotNetCsvReader_BasicCsvReader_Foreach |  9.917 us | 0.0304 us | 0.0285 us |      2.5330 |           - |           - |             3.91 KB |
-|      DotNetCsvReader_CsvReader_Foreach | 13.241 us | 0.1311 us | 0.1226 us |      3.2654 |           - |           - |             5.02 KB |
-|                  TinyCsvParser_Foreach | 83.638 us | 1.1671 us | 1.0346 us |     29.0527 |           - |           - |            15.32 KB |
+|                         Method |      Mean |     Error |    StdDev | Gen 0/1k Op | Gen 1/1k Op | Gen 2/1k Op | Allocated Memory/Op |
+|------------------------------- |----------:|----------:|----------:|------------:|------------:|------------:|--------------------:|
+| DotNetCsvReader_BasicCsvReader |  15.01 us | 0.0767 us | 0.0717 us |      2.9602 |           - |           - |             4.57 KB |
+|      DotNetCsvReader_CsvReader |  19.02 us | 0.0778 us | 0.0690 us |      3.6926 |           - |           - |             5.68 KB |
+|                  TinyCsvParser | 103.41 us | 1.4511 us | 1.2864 us |     36.9873 |           - |           - |            20.25 KB |
+|            LumenWorksCsvReader |  41.36 us | 0.2998 us | 0.2503 us |     17.0898 |           - |           - |            26.31 KB |
+
 
 ### Large CSV from file (1.722 million rows, 36.4 MB)
 Intel Core i5 CPU M 480 2.67GHz, 1 CPU, 4 logical and 2 physical cores

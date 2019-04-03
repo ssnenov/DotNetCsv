@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using BenchmarkDotNet.Attributes;
 using DotNetCsv;
+using LumenWorks.Framework.IO.Csv;
 using TinyCsvParser;
 using TinyCsvParser.Mapping;
 
@@ -41,6 +42,12 @@ namespace PerfTests
         public void TinyCsvParser()
         {
             tinyParser.ReadFromFile(csvFilePath, Encoding.UTF8).ToArray();
+        }
+
+        [Benchmark]
+        public void LumenWorksCsvReader()
+        {
+            new CsvReader(new StreamReader(csvFilePath)).ToArray();
         }
     }
 }

@@ -1,6 +1,9 @@
 using System;
+using System.IO;
+using System.Linq;
 using BenchmarkDotNet.Attributes;
 using DotNetCsv;
+using LumenWorks.Framework.IO.Csv;
 using TinyCsvParser;
 
 namespace PerfTests
@@ -45,21 +48,27 @@ namespace PerfTests
 			'127.0.0.1', '127.0.0.1', 1234";
 
         [Benchmark]
-        public void DotNetCsvReader_BasicCsvReader_Foreach()
+        public void DotNetCsvReader_BasicCsvReader()
         {
-            foreach (var item in basicCsvReader.ReadFromString(csv)) { }
+            basicCsvReader.ReadFromString(csv).ToArray();
         }
 
         [Benchmark]
-        public void DotNetCsvReader_CsvReader_Foreach()
+        public void DotNetCsvReader_CsvReader()
         {
-            foreach (var item in csvReader.ReadFromString(csv)) { }
+            csvReader.ReadFromString(csv).ToArray();
         }
 
         [Benchmark]
-        public void TinyCsvParser_Foreach()
+        public void TinyCsvParser()
         {
-            foreach (var item in tinyParser.ReadFromString(csvReaderOptions, csv)) { }
+            tinyParser.ReadFromString(csvReaderOptions, csv).ToArray();
+        }
+
+        [Benchmark]
+        public void LumenWorksCsvReader()
+        {
+            new CsvReader(new StringReader(csv)).ToArray();
         }
     }
 }
