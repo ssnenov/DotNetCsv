@@ -30,7 +30,7 @@ namespace DotNetCsv
             using (var rowsEnumerator = this.csvReader.Read(textReader).GetEnumerator())
             {
                 if (!rowsEnumerator.MoveNext())
-                {
+                { // TODO: add support for CSVs without header row
                     throw new InvalidOperationException("Could not read first row");
                 }
 
@@ -102,13 +102,10 @@ namespace DotNetCsv
                         dataMemberProperties[i] = property;
                         break;
                     }
-                    else
+                    else if (dataMember.Value != null && (dataMember.Value.Name == columnNames[i] || dataMember.Value.Order == i))
                     {
-                        if (dataMember.Value != null && (dataMember.Value.Name == columnNames[i] || dataMember.Value.Order == i))
-                        {
-                            dataMemberProperties[i] = property;
-                            break;
-                        }
+                        dataMemberProperties[i] = property;
+                        break;
                     }
                 }
             }
