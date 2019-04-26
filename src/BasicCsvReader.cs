@@ -54,7 +54,7 @@ namespace DotNetCsv
                     {
                         ReadEnclosedQuoteValue(currentChar, i);
                     }
-                    else if (currentChar == ',' && !isEnclosedQuotesValue) // TODO: add support for separator character - , or ;
+                    else if (!isEnclosedQuotesValue && currentChar == ',') // TODO: add support for separator character - , or ;
                     {
                         ReadCellValue();
                     }
@@ -95,14 +95,11 @@ namespace DotNetCsv
                 yield return rowCells;
                 this.ReadEndOfRow();
             }
-
-            // TODO: free it on Dispose
-            //gcHandle.Free();
         }
 
         private void ReadChar(char currentChar)
         {
-            if (currentCharIndex >= this.cellValueBuffer.Length - 1) // Ensure enough capacity
+            if (currentCharIndex++ >= this.cellValueBuffer.Length - 1) // Ensure enough capacity
             {
                 gcHandle.Free(); // Free it as soon as possible. Give the GC option to move the buffer in case of GC occurred during initialization of the new resized buffer
                 var resizedBuffer = new char[this.cellValueBuffer.Length * 2];
@@ -117,7 +114,6 @@ namespace DotNetCsv
             }
 
             *(this.cellValueBufferPtr++) = currentChar;
-            this.currentCharIndex++;
         }
 
         private void ReadEnclosedQuoteValue(char currentChar, int readerBufferPos)
@@ -130,7 +126,7 @@ namespace DotNetCsv
                     this.isEvenQuote = !this.isEvenQuote;
                     ReadChar(currentChar);
                 }
-                else if (currentCharIndex > 0 && this.isEvenQuote && *(this.cellValueBufferPtr - 1) == '"') // if the previous char was quote (preceding one for escaping)
+                else if (this.isEvenQuote && currentCharIndex > 0 && *(this.cellValueBufferPtr - 1) == '"') // if the previous char was quote (preceding one for escaping)
                 {
                     this.isEvenQuote = !this.isEvenQuote;
                     // Second quote and we will skip it
