@@ -1,7 +1,6 @@
 # DotNetCsv #
 
-DotNetCsv is a lightweight csv reader that supports [RFC4180](https://tools.ietf.org/html/rfc4180). In addition to it's portability it is ultra fast.
-
+DotNetCsv is a lightweight csv reader that supports [RFC4180](https://tools.ietf.org/html/rfc4180). In addition to it's portability it is ultra fast and outperforms the most popular .net csv readers.
 
 ## Benchmarks
 ### Small CSV - in memory string (27 rows)
