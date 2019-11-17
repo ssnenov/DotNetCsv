@@ -43,10 +43,10 @@ namespace DotNetCsv
             int bufferLength;
             int offset = 0;
             int lastlyReadBufferLength = 0;
-            while ((bufferLength = textReader.ReadBlock(readerBuffer, offset, ReaderBlockBufferSize - offset)) > 0)
+            while ((bufferLength = textReader.ReadBlock(readerBuffer, offset, ReaderBlockBufferSize - offset) + offset) > offset)
             {
                 lastlyReadBufferLength = bufferLength;
-                for (int i = 0; i < bufferLength; i++)
+                for (int i = 0; i < bufferLength - 1; i++)
                 {
                     char currentChar = readerBuffer[i];
 

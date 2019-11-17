@@ -47,14 +47,22 @@ namespace DotNetCsv
                     int rowCellsCount = rowsEnumerator.Current.Count;
                     for (int i = 0; i < rowCellsCount; i++)
                     {
-                        if (i <= knownPropertiesCount && i < columnsCount && columnToProperties[i] != null)
+                        if (propertyValues.Count <= knownPropertiesCount && i < columnsCount && columnToProperties[i] != null)
                         // Skip row values outside of a table -> not correspond to column and those without properties in the model
                         {
                             string propertyValueString = rowsEnumerator.Current[i];
                             TypeConverter propertyConverter = propertiesConverters[i];
                             if (propertyConverter != null)
                             {
-                                propertyValues.Add(propertyConverter.ConvertFromString(propertyValueString));
+                                try
+                                {
+                                    propertyValues.Add(propertyConverter.ConvertFromString(propertyValueString));
+                                }
+                                catch (Exception)
+                                {
+                                    propertyValues.Add(null);
+                                    // TODO: log the exception
+                                }
                             }
                             else
                             {
@@ -63,7 +71,19 @@ namespace DotNetCsv
                         }
                     }
 
-                    yield return objectCreation(propertyValues);
+                    T result;
+                    try
+                    {
+                        result = objectCreation(propertyValues);
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                        // TODO: log the exception
+                    }
+
+                    yield return result;
+
                     propertyValues.Clear();
                 }
             }
