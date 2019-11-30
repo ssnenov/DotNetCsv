@@ -133,7 +133,7 @@ namespace DotNetCsv
             return dataMemberProperties;
         }
 
-        public static Func<IList<object>, T> GetConstructionMethod(PropertyInfo[] properties)
+        private static Func<IList<object>, T> GetConstructionMethod(PropertyInfo[] properties)
         {
             var propertyValues = Expression.Parameter(typeof(IList<object>), "propertyValues");
             var modelCreationExpression = Expression.New(typeof(T));
