@@ -19,7 +19,7 @@ namespace DotNetCsv
         private bool isEvenQuote;
 
         private List<string> rowCells = new List<string>(); // TODO: add cells count as configuration
-        private char[] cellValueBuffer = new char[256]; // 256*2byte (1char = 2bytes) = 512bytes TODO: add buffer size as configuration
+        private char[] cellValueBuffer = new char[256]; // 128*2byte (1char = 2bytes) = 256bytes TODO: add buffer size as configuration
         private char[] readerBuffer = new char[ReaderBlockBufferSize];
         private char* cellValueBufferPtr;
         private char* cellValueBufferStartPtr;
@@ -54,7 +54,7 @@ namespace DotNetCsv
                     {
                         ReadEnclosedQuoteValue(currentChar, i);
                     }
-                    else if (!isEnclosedQuotesValue && currentChar == ',') // TODO: add support for separator character - , or ;
+                    else if (!isEnclosedQuotesValue && (currentChar == ',' || currentChar == ';'))
                     {
                         ReadCellValue();
                     }
