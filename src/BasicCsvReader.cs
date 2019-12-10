@@ -26,6 +26,7 @@ namespace DotNetCsv
         private int currentCharIndex = 0;
         private GCHandle gcHandle;
         private bool immutableRows = false; // TODO: add it as configuration. The default value should be true in order to prevent enumeration isues. However, the CsvReader should set it as false by default.
+        private readonly char separator = ','; // TODO: add it as configuration
 
         // TODO: add quote character as configuration - '"' or '\''
 
@@ -54,7 +55,7 @@ namespace DotNetCsv
                     {
                         ReadEnclosedQuoteValue(currentChar, i);
                     }
-                    else if (!isEnclosedQuotesValue && (currentChar == ',' || currentChar == ';'))
+                    else if (!isEnclosedQuotesValue && currentChar == this.separator)
                     {
                         ReadCellValue();
                     }
