@@ -11,7 +11,9 @@ namespace DotNetCsv
 {
     public class CsvReader<T> : ICsvReader<T>, IDisposable where T : new()
     {
-        private static PropertyInfo iListIndexerCache = typeof(IList<object>).GetProperties().First(x => x.GetIndexParameters().Length > 0);
+        private static readonly PropertyInfo iListIndexerCache = typeof(IList<object>).GetProperties().First(x => x.GetIndexParameters().Length > 0);
+
+        private static readonly MethodInfo defaultValueFactoryMethodCache = typeof(CsvReader<T>).GetMethod(nameof(GetDefaultValueFactory), BindingFlags.Static | BindingFlags.NonPublic);
 
         private readonly BasicCsvReader csvReader = new BasicCsvReader();
 
@@ -44,12 +46,18 @@ namespace DotNetCsv
 
                 while (rowsEnumerator.MoveNext())
                 {
-                    int rowCellsCount = rowsEnumerator.Current.Count;
-                    for (int i = 0; i < rowCellsCount; i++)
+                    int columnsToIterrate = Math.Max(rowsEnumerator.Current.Count, knownPropertiesCount);
+                    for (int i = 0; i < knownPropertiesCount; i++)
                     {
                         if (propertyValues.Count <= knownPropertiesCount && i < columnsCount && columnToProperties[i] != null)
                         // Skip row values outside of a table -> not correspond to column and those without properties in the model
                         {
+                            if (i >= rowsEnumerator.Current.Count)
+                            { // When the row is not complete and is missing N columns in the end, then we have to fill the rest of model properties with "nulls"
+                                propertyValues.Add(GetDefaultValue(columnToProperties[i].PropertyType));
+                                continue;
+                            }
+
                             string propertyValueString = rowsEnumerator.Current[i];
                             TypeConverter propertyConverter = propertiesConverters[i];
                             if (propertyConverter != null)
@@ -60,7 +68,7 @@ namespace DotNetCsv
                                 }
                                 catch (Exception)
                                 {
-                                    propertyValues.Add(null);
+                                    propertyValues.Add(GetDefaultValue(columnToProperties[i].PropertyType));
                                     // TODO: log the exception
                                 }
                             }
@@ -155,6 +163,18 @@ namespace DotNetCsv
             var memberInit = Expression.MemberInit(modelCreationExpression, assignmentExpression);
 
             return (Func<IList<object>, T>)Expression.Lambda(memberInit, propertyValues).Compile();
+        }
+
+        private static TDefault GetDefaultValueFactory<TDefault>() => default(TDefault);
+
+        private static object GetDefaultValue(Type type)
+        {
+            if (type.IsClass)
+            {
+                return null;
+            }
+
+            return defaultValueFactoryMethodCache.MakeGenericMethod(type).Invoke(null, Type.EmptyTypes);
         }
 
         public virtual void Dispose() => this.csvReader?.Dispose();
