@@ -47,7 +47,7 @@ namespace DotNetCsv
                 while (rowsEnumerator.MoveNext())
                 {
                     int columnsToIterrate = Math.Max(rowsEnumerator.Current.Count, knownPropertiesCount);
-                    for (int i = 0; i < knownPropertiesCount; i++)
+                    for (int i = 0; i < columnsToIterrate; i++)
                     {
                         if (propertyValues.Count <= knownPropertiesCount && i < columnsCount && columnToProperties[i] != null)
                         // Skip row values outside of a table -> not correspond to column and those without properties in the model
@@ -84,7 +84,7 @@ namespace DotNetCsv
                     {
                         result = objectCreation(propertyValues);
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
                         continue;
                         // TODO: log the exception
