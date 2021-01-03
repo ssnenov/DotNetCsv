@@ -109,7 +109,8 @@ namespace DotNetCsv
 
                 fixed (char* ptr = &this.cellValueBuffer[0])
                 {
-                    this.cellValueBufferStartPtr = this.cellValueBufferPtr = ptr;
+                    this.cellValueBufferStartPtr = ptr;
+                    this.cellValueBufferPtr = this.cellValueBufferStartPtr + currentCharIndex - 1;
                     gcHandle = GCHandle.Alloc(this.cellValueBuffer, GCHandleType.Pinned);
                 }
             }
